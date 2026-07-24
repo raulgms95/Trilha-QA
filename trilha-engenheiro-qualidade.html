@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trilha — Engenheiro de Qualidade</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+  :root{
+    --void:#0a0a16;
+    --void-2:#12122a;
+    --panel:#181834;
+    --panel-hi:#20204a;
+    --line:#2c2c58;
+    --ink:#e8e8ff;
+    --ink-dim:#9a9ad0;
+    --ink-faint:#6a6aa0;
+    --nebula:#8b6cf0;
+    --nebula-2:#c05bd8;
+    --comet:#4fd6e8;
+    --star:#ffd66b;
+    --done:#5be8a8;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  body{
+    font-family:'Inter',sans-serif;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(139,108,240,.14), transparent 60%),
+      radial-gradient(900px 500px at 0% 110%, rgba(79,214,232,.10), transparent 55%),
+      var(--void);
+    color:var(--ink);
+    min-height:100vh;
+    padding:0 0 80px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* faint starfield */
+  body::before{
+    content:"";
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,.35), transparent),
+      radial-gradient(1.5px 1.5px at 90% 20%, rgba(255,214,107,.6), transparent),
+      radial-gradient(1px 1px at 15% 70%, rgba(255,255,255,.3), transparent),
+      radial-gradient(1px 1px at 55% 15%, rgba(79,214,232,.5), transparent);
+    background-repeat:no-repeat;
+  }
+
+  .wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:0 22px;}
+
+  /* ---- header ---- */
+  header{padding:60px 0 34px;}
+  .eyebrow{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:12px;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--comet);margin-bottom:14px;display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--comet);opacity:.6;}
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;font-size:clamp(30px,6vw,50px);line-height:1.02;
+    letter-spacing:-.02em;
+    background:linear-gradient(120deg,#fff 0%, var(--nebula) 55%, var(--nebula-2) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{color:var(--ink-dim);font-size:15px;margin-top:14px;max-width:560px;line-height:1.6;}
+
+  /* ---- progress ---- */
+  .progress-card{
+    margin-top:30px;background:linear-gradient(180deg,var(--panel-hi),var(--panel));
+    border:1px solid var(--line);border-radius:16px;padding:22px 24px;
+    display:flex;align-items:center;gap:22px;flex-wrap:wrap;
+  }
+  .ring{position:relative;width:70px;height:70px;flex-shrink:0;}
+  .ring svg{transform:rotate(-90deg);}
+  .ring .val{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;color:var(--ink);
+  }
+  .p-meta{flex:1;min-width:180px;}
+  .p-meta .count{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:500;}
+  .p-meta .count b{color:var(--done);}
+  .bar{height:7px;border-radius:99px;background:var(--void-2);margin-top:12px;overflow:hidden;}
+  .bar span{display:block;height:100%;width:0;border-radius:99px;
+    background:linear-gradient(90deg,var(--comet),var(--nebula),var(--nebula-2));
+    transition:width .5s cubic-bezier(.2,.8,.2,1);}
+  .reset{
+    background:transparent;border:1px solid var(--line);color:var(--ink-faint);
+    font-family:'Space Grotesk',sans-serif;font-size:12px;letter-spacing:.05em;
+    padding:9px 16px;border-radius:99px;cursor:pointer;transition:.2s;
+  }
+  .reset:hover{border-color:var(--nebula-2);color:var(--ink);}
+
+  /* ---- phases ---- */
+  .phase{margin-top:26px;}
+  .phase-head{
+    display:flex;align-items:baseline;gap:16px;cursor:pointer;
+    padding:16px 4px;border-bottom:1px solid var(--line);user-select:none;
+  }
+  .num{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;
+    color:var(--void);background:var(--star);
+    min-width:34px;height:26px;border-radius:7px;
+    display:inline-flex;align-items:center;justify-content:center;
+    box-shadow:0 0 18px rgba(255,214,107,.35);flex-shrink:0;letter-spacing:.02em;
+  }
+  .phase.complete .num{background:var(--done);box-shadow:0 0 18px rgba(91,232,168,.4);}
+  .p-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;flex:1;letter-spacing:-.01em;}
+  .p-tag{font-size:12px;color:var(--ink-faint);font-family:'Space Grotesk',sans-serif;}
+  .chev{color:var(--ink-faint);transition:transform .3s;font-size:13px;}
+  .phase.open .chev{transform:rotate(90deg);}
+
+  .items{
+    max-height:0;overflow:hidden;transition:max-height .45s ease;
+  }
+  .phase.open .items{max-height:1400px;}
+  .items-inner{padding:10px 0 6px;}
+
+  .item{
+    display:flex;align-items:flex-start;gap:14px;
+    padding:12px 14px;margin:6px 0;border-radius:11px;
+    border:1px solid transparent;transition:.18s;cursor:pointer;
+  }
+  .item:hover{background:var(--panel);border-color:var(--line);}
+  .box{
+    width:20px;height:20px;border-radius:6px;flex-shrink:0;margin-top:1px;
+    border:1.5px solid var(--line);background:var(--void-2);
+    display:flex;align-items:center;justify-content:center;transition:.18s;
+  }
+  .box svg{width:12px;height:12px;stroke:var(--void);stroke-width:3.5;
+    fill:none;stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:20;stroke-dashoffset:20;transition:stroke-dashoffset .25s;}
+  .item.done .box{background:var(--done);border-color:var(--done);}
+  .item.done .box svg{stroke-dashoffset:0;}
+  .txt{flex:1;font-size:14.5px;line-height:1.5;color:var(--ink);transition:.18s;}
+  .txt small{display:block;color:var(--ink-faint);font-size:12.5px;margin-top:3px;line-height:1.45;}
+  .item.done .txt{color:var(--ink-faint);}
+  .item.done .txt b, .item.done .txt{text-decoration:line-through;text-decoration-color:var(--ink-faint);}
+  .txt b{color:var(--ink);font-weight:600;text-decoration:none;}
+
+  footer{margin-top:50px;text-align:center;color:var(--ink-faint);font-size:12.5px;
+    font-family:'Space Grotesk',sans-serif;letter-spacing:.03em;}
+
+  @media (max-width:560px){
+    .progress-card{gap:16px;}
+    .p-title{font-size:17px;}
+    .p-tag{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Roadmap · do zero ao avançado</div>
+    <h1>Trilha do Engenheiro<br>de Qualidade</h1>
+    <p class="sub">Onze fases em sequência. Marque cada tópico ao dominar — seu progresso fica salvo neste navegador. Cada fase se apoia na anterior, então avance na ordem.</p>
+
+    <div class="progress-card">
+      <div class="ring">
+        <svg width="70" height="70">
+          <circle cx="35" cy="35" r="30" fill="none" stroke="#20204a" stroke-width="6"/>
+          <circle id="ring-fill" cx="35" cy="35" r="30" fill="none" stroke="url(#g)" stroke-width="6"
+            stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"/>
+          <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#4fd6e8"/><stop offset="1" stop-color="#c05bd8"/>
+          </linearGradient></defs>
+        </svg>
+        <div class="val" id="ring-val">0%</div>
+      </div>
+      <div class="p-meta">
+        <div class="count"><b id="c-done">0</b> de <span id="c-total">0</span> tópicos concluídos</div>
+        <div class="bar"><span id="bar-fill"></span></div>
+      </div>
+      <button class="reset" id="reset">Zerar progresso</button>
+    </div>
+  </header>
+
+  <div id="track"></div>
+
+  <footer>Adaptado do seu mapa mental · avance uma fase por vez 🚀</footer>
+</div>
+
+<script>
+const DATA = [
+  { t:"Fundamentos de TI e Lógica", tag:"base", items:[
+    {b:"Lógica de programação", s:"Variáveis, condicionais, laços, funções"},
+    {b:"Uma linguagem base", s:"Python ou JavaScript — a mesma que usará em automação depois"},
+    {b:"Como uma aplicação funciona", s:"Cliente-servidor, front-end vs back-end, o que é uma requisição"},
+    {b:"Linha de comando e SO", s:"Terminal básico, navegação de arquivos, noções de Linux/Windows"},
+  ]},
+  { t:"Fundamentos de Qualidade e Teste", tag:"ISTQB", items:[
+    {b:"O que é qualidade de software", s:"Custo do defeito, os 7 princípios de teste"},
+    {b:"Ciclo de vida do teste", s:"Planejamento, análise, design, execução, encerramento"},
+    {b:"Níveis de teste", s:"Unitário, integração, sistema, aceitação"},
+    {b:"Tipos de teste", s:"Funcional, regressão, smoke, exploratório, não-funcional"},
+    {b:"Testes estáticos vs. dinâmicos", s:"Revisão de código e documentos vs. execução"},
+    {b:"Requisitos funcionais e não-funcionais", s:"Desempenho, usabilidade, segurança, confiabilidade, portabilidade, manutenibilidade"},
+  ]},
+  { t:"Metodologias e Gestão do Trabalho", tag:"processo", items:[
+    {b:"Ágil na prática", s:"Scrum, Kanban e o papel do QA no time"},
+    {b:"Ferramentas de gestão", s:"Jira, Azure DevOps, Trello"},
+    {b:"Escrita de casos de teste", s:"Critérios de aceitação e definição de \"pronto\""},
+    {b:"Ciclo de vida do bug", s:"Report de defeito bem escrito e rastreabilidade"},
+  ]},
+  { t:"Design de Casos de Teste", tag:"técnicas", items:[
+    {b:"Partição de equivalência", s:"Agrupar entradas que se comportam igual"},
+    {b:"Análise de valor limite", s:"Testar as fronteiras onde bugs se escondem"},
+    {b:"Tabela de decisão", s:"Combinações de condições e resultados"},
+    {b:"Transição de estados", s:"Fluxos e mudanças de estado do sistema"},
+    {b:"Cobertura e priorização", s:"Testar melhor com menos esforço"},
+  ]},
+  { t:"Web, HTTP e Banco de Dados", tag:"técnica", items:[
+    {b:"Como a web funciona", s:"HTTP/HTTPS, métodos, status codes, headers, cookies"},
+    {b:"HTML, CSS e DOM", s:"O suficiente para localizar elementos em automação"},
+    {b:"SQL", s:"SELECT, JOINs e filtros para validar dados no back-end"},
+  ]},
+  { t:"Teste de API", tag:"integração", items:[
+    {b:"Conceito de API REST", s:"JSON, autenticação, contratos"},
+    {b:"Postman / Insomnia", s:"Testes manuais e coleções"},
+    {b:"Validação de respostas", s:"Status, corpo, schema e casos de erro"},
+  ]},
+  { t:"Automação de Testes", tag:"divisor de águas", items:[
+    {b:"Automação front-end", s:"Selenium, Cypress ou Playwright"},
+    {b:"BDD", s:"Cucumber / Gherkin — cenários em linguagem natural"},
+    {b:"Mobile (opcional)", s:"Appium, se for sua área de interesse"},
+    {b:"Page Object Model", s:"Organizar código de teste sustentável"},
+    {b:"Framework de teste da linguagem", s:"PyTest, JUnit, Jest, etc."},
+  ]},
+  { t:"Testes Não-Funcionais", tag:"qualidade+", items:[
+    {b:"Performance", s:"JMeter, k6 ou Gatling — carga e stress"},
+    {b:"Segurança", s:"Noções do OWASP Top 10"},
+    {b:"Acessibilidade e usabilidade", s:"WCAG e testes de experiência"},
+  ]},
+  { t:"DevOps e Integração Contínua", tag:"engenharia", items:[
+    {b:"Git e versionamento", s:"Branches, commits, pull requests"},
+    {b:"CI/CD", s:"Jenkins, GitHub Actions ou GitLab CI"},
+    {b:"Docker", s:"Rodar testes em ambientes isolados e reprodutíveis"},
+    {b:"Testes no pipeline", s:"Continuous Testing e Continuous Delivery"},
+  ]},
+  { t:"Arquitetura de Automação", tag:"sênior", items:[
+    {b:"Framework do zero", s:"Estruturar do início, com boas práticas"},
+    {b:"Padrões de projeto em testes", s:"Reuso, manutenção e escala"},
+    {b:"Relatórios e paralelização", s:"Allure, execução paralela, dados de teste"},
+    {b:"Test data management", s:"Massa de dados controlada e reprodutível"},
+  ]},
+  { t:"Tópicos Avançados e Especialização", tag:"liderança", items:[
+    {b:"Microsserviços e contract testing", s:"Pact e testes de contrato"},
+    {b:"Observabilidade e testes em produção", s:"Monitorar qualidade além do deploy"},
+    {b:"Qualidade em IA / ML", s:"Testar sistemas com componentes de machine learning"},
+    {b:"Métricas e liderança técnica", s:"Cobertura, MTTR, escape de defeitos"},
+  ]},
+];
+
+const KEY = "trilha-qa-progress-v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ state = {}; }
+
+const track = document.getElementById('track');
+let total = 0;
+
+DATA.forEach((phase, pi) => {
+  const openByDefault = pi === 0;
+  const sec = document.createElement('section');
+  sec.className = 'phase' + (openByDefault ? ' open' : '');
+  sec.dataset.pi = pi;
+
+  const items = phase.items.map((it, ii) => {
+    total++;
+    const id = pi + '-' + ii;
+    const done = state[id] ? ' done' : '';
+    return `<div class="item${done}" data-id="${id}">
+      <div class="box"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></div>
+      <div class="txt"><b>${it.b}</b><small>${it.s}</small></div>
+    </div>`;
+  }).join('');
+
+  sec.innerHTML = `
+    <div class="phase-head">
+      <span class="num">${String(pi).padStart(2,'0')}</span>
+      <span class="p-title">${phase.t}</span>
+      <span class="p-tag">${phase.tag}</span>
+      <span class="chev">▶</span>
+    </div>
+    <div class="items"><div class="items-inner">${items}</div></div>`;
+  track.appendChild(sec);
+});
+
+document.getElementById('c-total').textContent = total;
+
+// toggle phase
+track.querySelectorAll('.phase-head').forEach(h=>{
+  h.addEventListener('click', ()=> h.parentElement.classList.toggle('open'));
+});
+
+// toggle item
+track.querySelectorAll('.item').forEach(el=>{
+  el.addEventListener('click', ()=>{
+    const id = el.dataset.id;
+    el.classList.toggle('done');
+    if(el.classList.contains('done')) state[id] = 1; else delete state[id];
+    save(); update();
+  });
+});
+
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+function update(){
+  const done = Object.keys(state).length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('c-done').textContent = done;
+  document.getElementById('ring-val').textContent = pct + '%';
+  document.getElementById('bar-fill').style.width = pct + '%';
+  const circ = 188.5;
+  document.getElementById('ring-fill').style.strokeDashoffset = circ - (circ*pct/100);
+
+  // mark completed phases
+  document.querySelectorAll('.phase').forEach(sec=>{
+    const pi = sec.dataset.pi;
+    const n = DATA[pi].items.length;
+    let c = 0;
+    for(let i=0;i<n;i++) if(state[pi+'-'+i]) c++;
+    sec.classList.toggle('complete', c===n);
+  });
+}
+
+document.getElementById('reset').addEventListener('click', ()=>{
+  if(confirm('Zerar todo o progresso da trilha?')){
+    state = {}; save();
+    document.querySelectorAll('.item.done').forEach(e=>e.classList.remove('done'));
+    update();
+  }
+});
+
+update();
+</script>
+</body>
+</html>
